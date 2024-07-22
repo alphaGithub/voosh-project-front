@@ -1,23 +1,63 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import NavBar from "./components/navBar";
+import LoginForm from "./components/LoginForm";
+import SignUpForm from "./components/signUpForm";
+import LogoutPage from "./components/Logout";
+import Task from "./components/Task";
+import { getUserRequest } from "./services/login";
 
 function App() {
+  const [loggedIn, setLoggedInStatus] = useState(false);
+  const [showContent, setShowContent] = useState("LOGIN");
+  const [user, setUser] = useState({});
+  useEffect(() => {
+    if (!loggedIn) {
+      setUser({});
+      setShowContent("LOGIN");
+    }
+  }, [loggedIn]);
+  useEffect(() => {
+    getUserRequest()
+      .then((data) => {
+        console.log(data);
+        if (data?.id) {
+          setUser(data);
+          setShowContent("TASK");
+          setLoggedInStatus(true);
+        }
+      })
+      .catch((error) => {
+        console.log("[err] error!", error);
+      });
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <NavBar
+        user={user}
+        loggedIn={loggedIn}
+        setStatus={setLoggedInStatus}
+        setContent={setShowContent}
+      />
+      {showContent === "LOGIN" ? (
+        <LoginForm
+          setStatus={setLoggedInStatus}
+          setContent={setShowContent}
+          setUser={setUser}
+        />
+      ) : (
+        <></>
+      )}
+      {showContent === "SIGNUP" ? (
+        <SignUpForm
+          setStatus={setLoggedInStatus}
+          setContent={setShowContent}
+          setUser={setUser}
+        />
+      ) : (
+        <></>
+      )}
+      {showContent === "TASK" ? <Task /> : <></>}
+      {showContent === "LOGOUT" ? <LogoutPage /> : <></>}
     </div>
   );
 }
