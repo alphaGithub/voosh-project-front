@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTask } from "../services/task";
+import { getTask, updateTask } from "../services/task";
 import {
   Button,
   IconButton,
@@ -10,29 +10,56 @@ import {
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import TaskRow from "./TaskRow";
 import TaskAdd from "./TaskAdd";
+
+import TaskColumn from "./TaskColumn";
 
 const Task = () => {
   const [task, setTask] = useState([]);
+  const [searchtask, setSearchTask] = useState([]);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("recent");
+  const [filter, setFilter] = useState("old");
   const [openAdd, setOpenAdd] = useState(false);
   const handleOpenAddTask = () => setOpenAdd(true);
   const handleCloseAddTask = () => setOpenAdd(false);
   const handleSearch = () => {};
+
   useEffect(() => {
-    console.log("tasks");
     getTask()
       .then((data) => {
-        console.log("setting", data);
-        console.log(data);
+        setSearchTask(data);
         setTask(data);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
+  useEffect(() => {
+    if (!search?.length) {
+      setSearchTask(task);
+      return;
+    }
+  }, [task]);
+  useEffect(() => {
+    if (!search?.length) {
+      setSearchTask(task);
+    }
+    const filteredItem = task?.filter(
+      (item) =>
+        item.name &&
+        item.name.toLowerCase().search(search?.toLowerCase()) !== -1
+    );
+    const sortedItem = filteredItem.sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      if (filter === "recent") {
+        return dateB - dateA;
+      }
+      return dateA - dateB;
+    });
+    setSearchTask(sortedItem);
+  }, [search, filter]);
+
   return (
     <div
       style={{
@@ -84,84 +111,9 @@ const Task = () => {
           <MenuItem value={"old"}>old</MenuItem>
         </Select>
       </Paper>
-      <Paper
-        elevation={3}
-        style={{
-          width: "25%",
-          height: "100%",
-          float: "left",
-          padding: "10px",
-          margin: "20px",
-          overflow: "auto",
-        }}
-      >
-        <h3
-          style={{
-            backgroundColor: "#0000FF",
-            padding: "10px",
-            color: "white",
-          }}
-        >
-          TODO
-        </h3>
-        {task
-          ?.filter((item) => item.status === "pending")
-          ?.map((item) => {
-            return <TaskRow data={item} key={item.id} setTask={setTask} />;
-          })}
-      </Paper>
-      <Paper
-        elevation={3}
-        style={{
-          width: "25%",
-          height: "100%",
-          float: "left",
-          padding: "10px",
-          margin: "20px",
-          overflow: "auto",
-        }}
-      >
-        <h3
-          style={{
-            backgroundColor: "#0000FF",
-            padding: "10px",
-            color: "white",
-          }}
-        >
-          IN PROGRESS
-        </h3>
-        {task
-          ?.filter((item) => item.status === "inProgress")
-          ?.map((item) => {
-            return <TaskRow data={item} key={item.id} setTask={setTask} />;
-          })}
-      </Paper>
-      <Paper
-        elevation={3}
-        style={{
-          width: "25%",
-          height: "100%",
-          float: "left",
-          padding: "10px",
-          margin: "20px",
-          overflow: "auto",
-        }}
-      >
-        <h3
-          style={{
-            backgroundColor: "#0000FF",
-            padding: "10px",
-            color: "white",
-          }}
-        >
-          COMPLETED
-        </h3>
-        {task
-          ?.filter((item) => item.status === "completed")
-          ?.map((item) => {
-            return <TaskRow data={item} key={item.id} setTask={setTask} />;
-          })}
-      </Paper>
+      <TaskColumn task={searchtask} setTask={setTask} type={"pending"} />
+      <TaskColumn task={searchtask} setTask={setTask} type={"inProgress"} />
+      <TaskColumn task={searchtask} setTask={setTask} type={"completed"} />
       <TaskAdd
         open={openAdd}
         handleClose={handleCloseAddTask}

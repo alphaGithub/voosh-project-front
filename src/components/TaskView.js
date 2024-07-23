@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Typography, Box, Button } from "@mui/material";
+import moment from "moment/moment";
 
 const style = {
   position: "absolute",
@@ -28,16 +29,22 @@ const TaskView = ({ open, handleClose, data }) => {
             Task Details
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Title: {data.name}
+            <b>Title: </b>
+            {data.name}
             <Button variant="contained" style={{ float: "right" }}>
               {data.status}
             </Button>
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Description: {data.description}
+            <b>Description: </b>
+            {data.description}
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            created Time : {data.createdAt}
+            <b>Created Time :</b>
+            {moment
+              .utc(data.createdAt)
+              .add(330, "minute")
+              .format("YYYY-MM-DD HH:mm:ss")}
           </Typography>
         </Box>
       </Modal>

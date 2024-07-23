@@ -1,6 +1,8 @@
 import axios from "axios";
 const paths = ["/"];
-const BASE_URL = "http://localhost:3123";
+const BASE_URL = "https://voosh-project.onrender.com/";
+// const BASE_URL = "http://localhost:3123";
+
 const httpClient = (endpoint = BASE_URL) => {
   const axiosInstance = axios.create({
     baseURL: endpoint,

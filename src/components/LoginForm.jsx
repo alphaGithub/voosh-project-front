@@ -5,14 +5,12 @@ import { loginRequest } from "../services/login";
 const LoginForm = ({ setStatus, setContent, setUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [msg, setMessage] = useState("");
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
 
     loginRequest({ email, password })
       .then((data) => {
-        console.log("[msg] loggedIn", data || {});
         setEmail("");
         setPassword("");
         setContent("TASK");
@@ -21,6 +19,10 @@ const LoginForm = ({ setStatus, setContent, setUser }) => {
       })
       .catch((e) => {
         console.log("[err] error", e);
+        setMessage("Error while login!");
+        setTimeout(() => {
+          setMessage("");
+        }, 3000);
       });
     // Reset form after submission (optional)
   };
@@ -67,6 +69,7 @@ const LoginForm = ({ setStatus, setContent, setUser }) => {
           <Button type="submit" variant="contained" color="primary" fullWidth>
             LogIn
           </Button>
+          <p style={{ padding: "10px", margin: "10px", color: "red" }}>{msg}</p>
         </form>
       </Paper>
     </div>

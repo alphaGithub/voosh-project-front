@@ -7,10 +7,9 @@ const SignUpForm = ({ setStatus, setContent, setUser }) => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [msg, setMessage] = useState("");
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
 
     signUpRequest({ firstName, lastName, email, password })
       .then((data) => {
@@ -25,6 +24,10 @@ const SignUpForm = ({ setStatus, setContent, setUser }) => {
       })
       .catch((e) => {
         console.log("[err] error", e);
+        setMessage("Error while signUp!");
+        setTimeout(() => {
+          setMessage("");
+        }, 3000);
       });
   };
   return (
@@ -33,7 +36,7 @@ const SignUpForm = ({ setStatus, setContent, setUser }) => {
         style={{ color: "#0000FF" }}
         sx={{ color: "text.primary", fontSize: 30, fontWeight: "medium" }}
       >
-        Login
+        SignUp
       </ListItem>
       <Paper
         elevation={3}
@@ -92,8 +95,9 @@ const SignUpForm = ({ setStatus, setContent, setUser }) => {
             required
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>
-            LogIn
+            SignUp
           </Button>
+          <p style={{ padding: "10px", margin: "10px", color: "red" }}>{msg}</p>
         </form>
       </Paper>
     </div>

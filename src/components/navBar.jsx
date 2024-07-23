@@ -66,7 +66,9 @@ const NavBar = ({ user = {}, loggedIn, setStatus, setContent }) => {
           component="div"
           sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
         >
-          <p>{user?.firstName}</p>
+          <p>
+            <b>{user?.firstName}</b>
+          </p>
         </Typography>
         <Box sx={{ display: { xs: "none", sm: "block" } }}>
           {!loggedIn ? (

@@ -37,8 +37,6 @@ const TaskEdit = ({ open, handleClose, data, setTask }) => {
         }, 5000);
         getTask()
           .then((data) => {
-            console.log("setting", data);
-            console.log(data);
             setTask(data);
           })
           .catch((error) => {
